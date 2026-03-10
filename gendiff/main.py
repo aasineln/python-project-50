@@ -1,8 +1,8 @@
-from gendiff.scripts.parser import args_parser
+from gendiff.scripts.args_parser import parser
 
 
 def main() -> None:
-    args_parser()
+    parser()
 
 
 if __name__ == "__main__":
