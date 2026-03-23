@@ -31,3 +31,6 @@ jobs:
           args: >
             -Dsonar.projectKey=aasineln_python-project-50
             -Dsonar.organization=aasineln
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.coverage.exclusions=tests/**
+            -Dsonar.exclusions=tests/**
