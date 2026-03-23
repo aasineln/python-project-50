@@ -1,2 +1,3 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/aasineln/python-project-50/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/aasineln/python-project-50/actions)
+[![QA SonarQube](https://sonarcloud.io/api/project_badges/measure?project=aasineln_python-project-50&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=aasineln_aasineln_python-project-50&branch=main)
