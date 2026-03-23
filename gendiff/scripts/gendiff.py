@@ -1,6 +1,6 @@
 import json
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 
 def parse_json(file_path: str) -> dict[str, Any]:
