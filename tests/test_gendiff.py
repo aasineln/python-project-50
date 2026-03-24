@@ -52,6 +52,7 @@ def test_generate_diff_json_files():
 
     assert result == expected
 
+
 def test_generate_diff_yaml_files():
     result = generate_diff("file1.yaml", "file2.yaml")
     expected = textwrap.dedent("""\
@@ -102,6 +103,7 @@ def test_generate_diff_yaml_files():
 
     assert result == expected
 
+
 def test_plain_format():
     result = generate_diff("file1.json", "file2.json", "plain")
 
@@ -119,6 +121,7 @@ def test_plain_format():
     Property 'group3' was added with value: [complex value]""")
 
     assert result == expected
+
 
 def test_default_formatter():
     result = generate_diff("file1.json", "file2.json")
