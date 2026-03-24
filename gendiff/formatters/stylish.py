@@ -1,25 +1,6 @@
 from typing import Any
 
 
-def format_value(value: Any, depth: int = 0) -> str:
-    indent = "    " * (depth + 1)
-
-    if isinstance(value, dict):
-        lines = ["{"]
-        for key, val in value.items():
-            lines.append(f"{indent}    {key}: {format_value(val, depth + 1)}")
-        lines.append(f"{indent}}}")
-        return "\n".join(lines)
-    elif isinstance(value, bool):
-        return str(value).lower()
-    elif value is None:
-        return "null"
-    elif isinstance(value, (int, float)):
-        return str(value)
-    else:
-        return str(value)
-
-
 def format_stylish(diff: dict[str, Any], depth: int = 0) -> str:
     indent = "    " * depth
     lines = ["{"]
@@ -49,3 +30,22 @@ def format_stylish(diff: dict[str, Any], depth: int = 0) -> str:
 
     lines.append(f"{indent}}}")
     return "\n".join(lines)
+
+
+def format_value(value: Any, depth: int = 0) -> str:
+    indent = "    " * (depth + 1)
+
+    if isinstance(value, dict):
+        lines = ["{"]
+        for key, val in value.items():
+            lines.append(f"{indent}    {key}: {format_value(val, depth + 1)}")
+        lines.append(f"{indent}}}")
+        return "\n".join(lines)
+    elif isinstance(value, bool):
+        return str(value).lower()
+    elif value is None:
+        return "null"
+    elif isinstance(value, (int, float)):
+        return str(value)
+    else:
+        return str(value)

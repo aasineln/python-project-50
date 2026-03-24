@@ -1,5 +1,7 @@
 from typing import Any
 
+from gendiff.formatters.json import format_json
+from gendiff.formatters.plain import format_plain
 from gendiff.formatters.stylish import format_stylish
 from gendiff.scripts.file_parsers import parse_file
 
@@ -42,7 +44,7 @@ def get_diff(data1: dict[str, Any], data2: dict[str, Any]) -> dict[str, Any]:
 
 def generate_diff(
     file_path1: str, file_path2: str, format_type: str = "stylish"
-) -> str:
+) -> str | None:
     data1 = parse_file(file_path1)
     data2 = parse_file(file_path2)
 
@@ -50,5 +52,12 @@ def generate_diff(
 
     if format_type == "stylish":
         return format_stylish(diff)
+    elif format_type == "plain":
+        return format_plain(diff)
+    elif format_type == "json":
+        return format_json(diff)
     else:
-        raise ValueError(f"Unsupported format: {format_type}")
+        print(
+            f"Unsupported format: {format_type}. "
+            f"Supported formats: stylish, plain, json"
+        )

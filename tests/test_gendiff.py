@@ -102,3 +102,28 @@ class Test:
         }""")
 
         assert result == expected
+
+    def test_plain_format(self):
+        result = generate_diff("file1.json", "file2.json", "plain")
+
+        expected_lines = [
+            "Property 'common.follow' was added with value: false",
+            "Property 'common.setting2' was removed",
+            "Property 'common.setting3' was updated. From true to null",
+            "Property 'common.setting4' was added with value: 'blah blah'",
+            "Property 'common.setting5' was added with value: [complex value]",
+            "Property 'common.setting6.doge.wow' was updated. From '' to 'so much'",
+            "Property 'common.setting6.ops' was added with value: 'vops'",
+            "Property 'group1.baz' was updated. From 'bas' to 'bars'",
+            "Property 'group1.nest' was updated. From [complex value] to 'str'",
+            "Property 'group2' was removed",
+            "Property 'group3' was added with value: [complex value]",
+        ]
+
+        for line in expected_lines:
+            assert line in result
+
+    def test_default_formatter(self):
+        result = generate_diff("file1.json", "file2.json")
+        assert "    common: {" in result
+        assert "  + follow: false" in result
