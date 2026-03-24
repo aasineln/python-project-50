@@ -1,59 +1,54 @@
-import json
-from pathlib import Path
 from typing import Any
 
-
-def parse_json(file_path: str) -> dict[str, Any]:
-    path = Path("gendiff", "data", file_path)
-    with open(path, "r") as file:
-        return json.load(file)
+from gendiff.formatters.stylish import format_stylish
+from gendiff.scripts.file_parsers import parse_file
 
 
-def build_diff(data1: dict[str, Any], data2: dict[str, Any]) -> dict[str, Any]:
+def get_diff(data1: dict[str, Any], data2: dict[str, Any]) -> dict[str, Any]:
+    """
+    Строит внутреннее представление различий между двумя словарями.
+
+    Возвращает словарь, где для каждого ключа указан статус и значения:
+    - "added": ключ только во втором словаре
+    - "removed": ключ только в первом словаре
+    - "unchanged": ключ в обоих словарях с одинаковыми значениями
+    - "changed": ключ в обоих словарях с разными значениями
+    - "nested": ключ в обоих словарях и значения - словари (рекурсивный обход)
+    """
     all_keys = sorted(set(data1) | set(data2))
+    result = {}
 
-    def get_status(key: str) -> str:
+    for key in all_keys:
         if key not in data1:
-            return "added"
-        if key not in data2:
-            return "removed"
-        if data1[key] == data2[key]:
-            return "unchanged"
-        return "changed"
+            result[key] = {"status": "added", "value": data2[key]}
+        elif key not in data2:
+            result[key] = {"status": "removed", "value": data1[key]}
+        elif isinstance(data1[key], dict) and isinstance(data2[key], dict):
+            result[key] = {
+                "status": "nested",
+                "children": get_diff(data1[key], data2[key]),
+            }
+        elif data1[key] == data2[key]:
+            result[key] = {"status": "unchanged", "value": data1[key]}
+        else:
+            result[key] = {
+                "status": "changed",
+                "old_value": data1[key],
+                "new_value": data2[key],
+            }
 
-    return {
-        key: {
-            "status": get_status(key),
-            "value1": data1.get(key),
-            "value2": data2.get(key),
-        }
-        for key in all_keys
-    }
-
-
-def format_diff(diff: dict[str, Any]) -> str:
-    lines = ["{"]
-
-    for key, value in diff.items():
-        status = value["status"]
-
-        if status == "unchanged":
-            lines.append(f'    {key}: {value["value1"]}')
-        elif status == "removed":
-            lines.append(f'  - {key}: {value["value1"]}')
-        elif status == "added":
-            lines.append(f'  + {key}: {value["value2"]}')
-        elif status == "changed":
-            lines.append(f'  - {key}: {value["value1"]}')
-            lines.append(f'  + {key}: {value["value2"]}')
-
-    lines.append("}")
-    return "\n".join(lines)
+    return result
 
 
-def generate_diff(file_path1: str, file_path2: str) -> str:
-    data1 = parse_json(file_path1)
-    data2 = parse_json(file_path2)
+def generate_diff(
+    file_path1: str, file_path2: str, format_type: str = "stylish"
+) -> str:
+    data1 = parse_file(file_path1)
+    data2 = parse_file(file_path2)
 
-    diff = build_diff(data1, data2)
-    return format_diff(diff)
+    diff = get_diff(data1, data2)
+
+    if format_type == "stylish":
+        return format_stylish(diff)
+    else:
+        raise ValueError(f"Unsupported format: {format_type}")

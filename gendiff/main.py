@@ -7,6 +7,7 @@ def main() -> None:
     result = generate_diff(
         file_path1=args.first_file,
         file_path2=args.second_file,
+        format_type=args.format,
     )
     print(result)
 
