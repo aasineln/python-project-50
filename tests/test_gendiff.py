@@ -2,128 +2,125 @@ import textwrap
 from gendiff.scripts.gendiff import generate_diff
 
 
-class Test:
-    def test_generate_diff_json_files(self):
-        result = generate_diff("file1.json", "file2.json")
-        expected = textwrap.dedent("""\
-        {
-            common: {
-              + follow: false
-                setting1: Value 1
-              - setting2: 200
-              - setting3: true
-              + setting3: null
-              + setting4: blah blah
-              + setting5: {
-                    key5: value5
+def test_generate_diff_json_files():
+    result = generate_diff("file1.json", "file2.json")
+    expected = textwrap.dedent("""\
+    {
+        common: {
+          + follow: false
+            setting1: Value 1
+          - setting2: 200
+          - setting3: true
+          + setting3: null
+          + setting4: blah blah
+          + setting5: {
+                key5: value5
+            }
+            setting6: {
+                doge: {
+                  - wow: 
+                  + wow: so much
                 }
-                setting6: {
-                    doge: {
-                      - wow: 
-                      + wow: so much
-                    }
-                    key: value
-                  + ops: vops
+                key: value
+              + ops: vops
+            }
+        }
+        group1: {
+          - baz: bas
+          + baz: bars
+            foo: bar
+          - nest: {
+                key: value
+            }
+          + nest: str
+        }
+      - group2: {
+            abc: 12345
+            deep: {
+                id: 45
+            }
+        }
+      + group3: {
+            deep: {
+                id: {
+                    number: 45
                 }
             }
-            group1: {
-              - baz: bas
-              + baz: bars
-                foo: bar
-              - nest: {
-                    key: value
-                }
-              + nest: str
-            }
-          - group2: {
-                abc: 12345
-                deep: {
-                    id: 45
-                }
-            }
-          + group3: {
-                deep: {
-                    id: {
-                        number: 45
-                    }
-                }
-                fee: 100500
-            }
-        }""")
+            fee: 100500
+        }
+    }""")
 
-        assert result == expected
+    assert result == expected
 
-    def test_generate_diff_yaml_files(self):
-        result = generate_diff("file1.yaml", "file2.yaml")
-        expected = textwrap.dedent("""\
-        {
-            common: {
-              + follow: false
-                setting1: Value 1
-              - setting2: 200
-              - setting3: true
-              + setting3: null
-              + setting4: blah blah
-              + setting5: {
-                    key5: value5
+def test_generate_diff_yaml_files():
+    result = generate_diff("file1.yaml", "file2.yaml")
+    expected = textwrap.dedent("""\
+    {
+        common: {
+          + follow: false
+            setting1: Value 1
+          - setting2: 200
+          - setting3: true
+          + setting3: null
+          + setting4: blah blah
+          + setting5: {
+                key5: value5
+            }
+            setting6: {
+                doge: {
+                  - wow: 
+                  + wow: so much
                 }
-                setting6: {
-                    doge: {
-                      - wow: 
-                      + wow: so much
-                    }
-                    key: value
-                  + ops: vops
+                key: value
+              + ops: vops
+            }
+        }
+        group1: {
+          - baz: bas
+          + baz: bars
+            foo: bar
+          - nest: {
+                key: value
+            }
+          + nest: str
+        }
+      - group2: {
+            abc: 12345
+            deep: {
+                id: 45
+            }
+        }
+      + group3: {
+            deep: {
+                id: {
+                    number: 45
                 }
             }
-            group1: {
-              - baz: bas
-              + baz: bars
-                foo: bar
-              - nest: {
-                    key: value
-                }
-              + nest: str
-            }
-          - group2: {
-                abc: 12345
-                deep: {
-                    id: 45
-                }
-            }
-          + group3: {
-                deep: {
-                    id: {
-                        number: 45
-                    }
-                }
-                fee: 100500
-            }
-        }""")
+            fee: 100500
+        }
+    }""")
 
-        assert result == expected
+    assert result == expected
 
-    def test_plain_format(self):
-        result = generate_diff("file1.json", "file2.json", "plain")
+def test_plain_format():
+    result = generate_diff("file1.json", "file2.json", "plain")
 
-        expected_lines = [
-            "Property 'common.follow' was added with value: false",
-            "Property 'common.setting2' was removed",
-            "Property 'common.setting3' was updated. From true to null",
-            "Property 'common.setting4' was added with value: 'blah blah'",
-            "Property 'common.setting5' was added with value: [complex value]",
-            "Property 'common.setting6.doge.wow' was updated. From '' to 'so much'",
-            "Property 'common.setting6.ops' was added with value: 'vops'",
-            "Property 'group1.baz' was updated. From 'bas' to 'bars'",
-            "Property 'group1.nest' was updated. From [complex value] to 'str'",
-            "Property 'group2' was removed",
-            "Property 'group3' was added with value: [complex value]",
-        ]
+    expected = textwrap.dedent("""\
+    Property 'common.follow' was added with value: false
+    Property 'common.setting2' was removed
+    Property 'common.setting3' was updated. From true to null
+    Property 'common.setting4' was added with value: 'blah blah'
+    Property 'common.setting5' was added with value: [complex value]
+    Property 'common.setting6.doge.wow' was updated. From '' to 'so much'
+    Property 'common.setting6.ops' was added with value: 'vops'
+    Property 'group1.baz' was updated. From 'bas' to 'bars'
+    Property 'group1.nest' was updated. From [complex value] to 'str'
+    Property 'group2' was removed
+    Property 'group3' was added with value: [complex value]""")
 
-        for line in expected_lines:
-            assert line in result
+    assert result == expected
 
-    def test_default_formatter(self):
-        result = generate_diff("file1.json", "file2.json")
-        assert "    common: {" in result
-        assert "  + follow: false" in result
+def test_default_formatter():
+    result = generate_diff("file1.json", "file2.json")
+    assert "    common: {" in result
+    assert "  + follow: false" in result
