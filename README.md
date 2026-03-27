@@ -60,4 +60,7 @@ make lint           # Run ruff linter
 make test           # Run tests
 make test-coverage  # Run tests with coverage report
 make build          # Build the package
-```
+```  
+  
+## Demo  
+[![asciicast](https://asciinema.org/a/875794.svg)](https://asciinema.org/a/875794)  
